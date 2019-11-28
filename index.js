@@ -28,7 +28,7 @@ async function run() {
     console.log(`Adding issue ${issue} to ${project['name']}`);
     console.log("");
 
-    query = 'mutation($issueId:ID!, $projectId:ID!) {updateIssue(input:{id:$issueId, projectIds:[$projectId]}) {issue {id}}';
+    query = 'mutation($issueId:ID!, $projectId:ID!) {updateIssue(input:{id:$issueId, projectIds:[$projectId]}) {issue {id}}}';
     variables = { issueId: issue, projectId: project['id'] };
 
     response = await fetch('https://api.github.com/graphql', {
