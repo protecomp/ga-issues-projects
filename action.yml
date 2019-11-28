@@ -1,13 +1,13 @@
 name: 'Add to Project'
 description: 'Add an issue to the first project on the repo'
 inputs:
-  issue:
+- issue:
     description: 'issue'
     required: true
-  repository:
+- repository:
     description: 'repository'
     required: true
-  github_token:
+- github_token:
     description: 'github_token'
     required: true
 runs:
