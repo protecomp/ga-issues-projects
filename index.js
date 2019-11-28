@@ -26,7 +26,7 @@ async function run() {
     const project = response['data']['repository']['projects']['nodes'][0];
 
     query = 'query($owner:String!, $name:String!, $number:Int!){repository(owner: $owner, name: $name) {issue(number:$number) {id}}}';
-    variables = { owner: repository.split("/")[0], name: repository.split("/")[1], number: issue };
+    variables = { owner: repository.split("/")[0], name: repository.split("/")[1], number: parseInt(issue) };
 
     response = await fetch('https://api.github.com/graphql', {
       method: 'POST',
