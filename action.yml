@@ -1,13 +1,15 @@
-name: 'Wait'
-description: 'Wait a designated number of milliseconds'
+name: 'Add to Project'
+description: 'Add an issue to the first project on the repo'
 inputs:
-  milliseconds:  # id of input
-    description: 'number of milliseconds to wait'
+  issue:
+    description: 'issue'
     required: true
-    default: '1000'
-outputs:
-  time: # output will be available to future steps 
-    description: 'The message to output'
+  repository:
+    description: 'repository'
+    required: true
+  github_token:
+    description: 'github_token'
+    required: true
 runs:
   using: 'node12'
   main: 'dist/index.js'
