@@ -25,11 +25,28 @@ async function run() {
     console.log(response);
     const project = response['data']['repository']['projects']['nodes'][0];
 
+    query = 'query($owner:String!, $name:String!, $number:Int!){repository(owner: $owner, name: $name) {issue(number:$number) {id}}';
+    variables = { owner: repository.split("/")[0], name: repository.split("/")[1], number: issue };
+
+    response = await fetch('https://api.github.com/graphql', {
+      method: 'POST',
+      body: JSON.stringify({query, variables}),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `bearer ${github_token}`,
+      }
+    }).then(function(response) {
+      return response.json();
+    });
+    console.log(response);
+    const issueId = response['data']['repository']['issue']['id'];
+
     console.log(`Adding issue ${issue} to ${project['name']}`);
     console.log("");
 
     query = 'mutation($issueId:ID!, $projectId:ID!) {updateIssue(input:{id:$issueId, projectIds:[$projectId]}) {issue {id}}}';
-    variables = { issueId: issue, projectId: project['id'] };
+    variables = { issueId, projectId: project['id'] };
 
     response = await fetch('https://api.github.com/graphql', {
       method: 'POST',
