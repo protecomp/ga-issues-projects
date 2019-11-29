@@ -2,7 +2,13 @@ name: 'Add to Project'
 description: 'Add an issue to the first project on the repo'
 inputs:
   issue:
-    description: 'issue'
+    description: 'issue number, use ${{ github.event.issue.number }}'
+    required: true
+  repository:
+    description: 'repository path, use ${{ github.repository }}'
+    required: true
+  github_token:
+    description: 'GitHub token, use ${{ secrets.GITHUB_TOKEN }}'
     required: true
 runs:
   using: 'node12'
