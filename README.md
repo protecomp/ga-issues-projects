@@ -1,6 +1,8 @@
 # Add issue to project
 
-A javascript github action to add an issue to a project
+A javascript github action to add an issue to the first project on the repository.
+
+NOTE: If you have more than one project, this might not work.
 
 # Usage
 
