@@ -18,7 +18,7 @@ jobs:
   add_to_project:
     runs-on: ubuntu-latest
     steps:
-    - uses: protecomp/ga-issues-projects@develop
+    - uses: protecomp/ga-issues-projects@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         repository: ${{ github.repository }}
