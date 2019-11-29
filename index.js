@@ -61,7 +61,7 @@ async function run() {
       updateIssue(input:{id:$issueId, projectIds:[$projectId]}) {
         issue {
           id
-        
+        }
       }
     }`;
     variables = { issueId, projectId: project['id'] };
