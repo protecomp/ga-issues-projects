@@ -64,6 +64,20 @@ module.exports = require("os");
 const core = __webpack_require__(470);
 const fetch = __webpack_require__(454);
 
+async function github_query(github_token, query, variables) {
+  return fetch('https://api.github.com/graphql', {
+    method: 'POST',
+    body: JSON.stringify({query, variables}),
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': `bearer ${github_token}`,
+    }
+  }).then(function(response) {
+    return response.json();
+  });
+}
+
 // most @actions toolkit packages have async methods
 async function run() {
   try { 
@@ -71,57 +85,51 @@ async function run() {
     const repository = core.getInput('repository');
     const github_token = core.getInput('github_token');
 
-    let query = 'query($owner:String!, $name:String!){repository(owner: $owner, name: $name) {projects(first:1) {nodes {id name}}}}';
+    let query = `
+    query($owner:String!, $name:String!){
+      repository(owner: $owner, name: $name) {
+        projects(first:1) {
+          nodes {
+            id
+            name
+          }
+        }
+      }
+    }`;
     let variables = { owner: repository.split("/")[0], name: repository.split("/")[1] };
 
-    let response = await fetch('https://api.github.com/graphql', {
-      method: 'POST',
-      body: JSON.stringify({query, variables}),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': `bearer ${github_token}`,
-      }
-    }).then(function(response) {
-      return response.json();
-    });
+    let response = await github_query(github_token, query, variables);
     console.log(response);
     const project = response['data']['repository']['projects']['nodes'][0];
 
-    query = 'query($owner:String!, $name:String!, $number:Int!){repository(owner: $owner, name: $name) {issue(number:$number) {id}}}';
+    query = `
+    query($owner:String!, $name:String!, $number:Int!){
+      repository(owner: $owner, name: $name) {
+        issue(number:$number) {
+          id
+        }
+      }
+    }`;
     variables = { owner: repository.split("/")[0], name: repository.split("/")[1], number: parseInt(issue) };
 
-    response = await fetch('https://api.github.com/graphql', {
-      method: 'POST',
-      body: JSON.stringify({query, variables}),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': `bearer ${github_token}`,
-      }
-    }).then(function(response) {
-      return response.json();
-    });
+    response = await github_query(github_token, query, variables);
     console.log(response);
     const issueId = response['data']['repository']['issue']['id'];
 
     console.log(`Adding issue ${issue} to ${project['name']}`);
     console.log("");
 
-    query = 'mutation($issueId:ID!, $projectId:ID!) {updateIssue(input:{id:$issueId, projectIds:[$projectId]}) {issue {id}}}';
+    query = `
+    mutation($issueId:ID!, $projectId:ID!) {
+      updateIssue(input:{id:$issueId, projectIds:[$projectId]}) {
+        issue {
+          id
+        
+      }
+    }`;
     variables = { issueId, projectId: project['id'] };
 
-    response = await fetch('https://api.github.com/graphql', {
-      method: 'POST',
-      body: JSON.stringify({query, variables}),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': `bearer ${github_token}`,
-      }
-    }).then(function(response) {
-      return response.json();
-    });
+    response = await github_query(github_token, query, variables);
     console.log(response);
     console.log(`Done!`)
   } 
